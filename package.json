@@ -1,0 +1,22 @@
+{
+  "name": "cfx-server-get",
+  "version": "1.0.0",
+  "description": "fetch and unpack cfx server files",
+  "main": "index.js",
+  "repository": "git+https://github.com/FrazzIe/cfx-server-get.git",
+  "keywords": [
+    "cfx",
+    "fivem",
+    "server",
+    "get",
+    "download",
+    "unpack"
+  ],
+  "author": "Fraser Watt",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FrazzIe/cfx-server-get/issues"
+  },
+  "homepage": "https://github.com/FrazzIe/cfx-server-get#readme",
+  "private": false
+}
