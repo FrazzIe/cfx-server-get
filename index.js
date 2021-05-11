@@ -10,14 +10,16 @@ const appName = "cfx-server-get";
 const numArgs = 2;
 const helpMsg = `
 	${appName} usage:
-	node index.js <version> <output directory>
+	node index.js <version> <output-directory> <optional: update-check>
 		<version>:
 			- recommended
 			- optional
 			- latest
 			- critical
-		<output directory>:
+		<output-directory>:
 			- C:\\Path\\To\\File
+		<optional: update-check>
+			- Any value
 `;
 const versions = ["recommended", "optional", "latest", "critical"];
 const platforms = ["win32", "linux"];
