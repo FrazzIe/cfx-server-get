@@ -22,10 +22,12 @@ const helpMsg = `
 const versions = ["recommended", "optional", "latest", "critical"];
 const platforms = ["win32", "linux"];
 const platform = os.platform();
+const infoFilename = "info.txt";
 
 let args = process.argv.slice(2);
 let version = args[0];
 let output = args[1];
+let fileCheck = args[2];
 
 function log(tag, msg) {
 	console.log(`${appName}/${tag}: ${msg}`);
@@ -33,7 +35,7 @@ function log(tag, msg) {
 
 function StoreBuildInfo(buildNum) {
 	let data = version + "," + buildNum;
-	fs.writeFile(path.join(output, "info.txt"), data, (error) => {
+	fs.writeFile(path.join(output, infoFilename), data, (error) => {
 		if (error) {
 			log("ERROR", `Couldn't cache the build info [${error.message}]`);
 			return;
@@ -87,9 +89,40 @@ function DownloadBuild(downloadURL, buildNum) {
 	});
 }
 
+function UpdateAvailable(buildNum) {
+	fileCheck = fileCheck !== undefined;
+
+	if (!fileCheck)
+		return true;
+
+	try {
+		const data = fs.readFileSync(path.join(output, "info.txt"), "utf8");
+		const info = data.split(",");
+
+		if (info.length < 1)
+			return true;
+
+		if (info[0] != version)
+			return true;
+
+		if (info[1] != buildNum)
+			return true;
+
+		return false;
+	} catch(error) {
+		log("ERROR", "Cache not found");
+		return true;
+	}
+}
+
 function OnBuildInfo(data) {
 	let buildNum = data[version];
 	let downloadURL = data[version + "_download"];
+
+	if (!UpdateAvailable(buildNum)) {
+		log("INFO", "Skipping server download..");
+		return;
+	}
 
 	if (!buildNum) {
 		log("ERROR", `Couldn't fetch ${version} build number`);
