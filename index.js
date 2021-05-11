@@ -30,6 +30,17 @@ function log(tag, msg) {
 	console.log(`${appName}/${tag}: ${msg}`);
 }
 
+function ExtractBuild(fileBuffer, buildNum) {
+	try {
+		const zip = new AdmZip(fileBuffer);
+		zip.extractAllTo(output);
+	} catch(error) {
+		log("ERROR", `Couldn't extract the ${version} build to ${output}`);
+		return;
+	}
+
+}
+
 function DownloadBuild(downloadURL, buildNum) {
 	https.get(downloadURL, (response) => {
 		const { statusCode } = response;
