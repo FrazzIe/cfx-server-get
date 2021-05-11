@@ -1,5 +1,6 @@
 //imports
 const fs = require("fs");
+const os = require("os");
 
 //vars
 const appName = "cfx-server-get";
@@ -15,12 +16,20 @@ const helpMsg = `
 			- C:\\Path\\To\\File
 `;
 const versions = ["recommended", "latest", "critical"];
+const platforms = ["win32", "linux"];
+const platform = os.platform();
+
 let args = process.argv.slice(2);
 let version = args[0];
 let output = args[1];
 
 function log(tag, msg) {
 	console.log(`${appName}/${tag}: ${msg}`);
+}
+
+if (!platforms.includes(platform)) {
+	log("ERROR", `${platform} is not a supported os, terminating.`);
+	return;
 }
 
 if (args.length == 0) {
