@@ -97,7 +97,6 @@ https.get(`https://changelogs-live.fivem.net/api/changelog/versions/${platform}/
 
 	if (error) {
 		log("ERROR", error.message);
-		// Consume response data to free up memory
 		response.resume();
 		return;
 	}
@@ -115,5 +114,3 @@ https.get(`https://changelogs-live.fivem.net/api/changelog/versions/${platform}/
 		}
 	});
 });
-
-log("SUCCESS", "DO STUFF");
