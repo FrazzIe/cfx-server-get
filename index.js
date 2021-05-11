@@ -1,6 +1,7 @@
 //imports
 const fs = require("fs");
 const os = require("os");
+const https = require("https");
 
 //vars
 const appName = "cfx-server-get";
