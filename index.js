@@ -2,6 +2,7 @@
 const fs = require("fs");
 const os = require("os");
 const https = require("https");
+const path = require("path");
 const AdmZip = require("adm-zip");
 
 //vars
@@ -30,6 +31,16 @@ function log(tag, msg) {
 	console.log(`${appName}/${tag}: ${msg}`);
 }
 
+function StoreBuildInfo(buildNum) {
+	let data = version + "," + buildNum;
+	fs.writeFile(path.join(output, "info.txt"), data, (error) => {
+		if (error) {
+			log("ERROR", `Couldn't cache the build info [${error.message}]`);
+			return;
+		}
+	})
+}
+
 function ExtractBuild(fileBuffer, buildNum) {
 	try {
 		const zip = new AdmZip(fileBuffer);
@@ -39,6 +50,7 @@ function ExtractBuild(fileBuffer, buildNum) {
 		return;
 	}
 
+	StoreBuildInfo(buildNum);
 }
 
 function DownloadBuild(downloadURL, buildNum) {
