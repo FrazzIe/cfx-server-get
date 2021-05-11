@@ -30,7 +30,37 @@ function log(tag, msg) {
 }
 
 function DownloadBuild(downloadURL, buildNum) {
+	https.get(downloadURL, (response) => {
+		const { statusCode } = response;
+		const contentType = response.headers['content-type'];
+		let error;
 
+		if (statusCode !== 200) {
+			error = new Error(`Request failed with status code: ${statusCode}`);
+		} else if (!/^application\/zip/.test(contentType)) {
+			error = new Error(`Invalid content-type, expected "application/zip" but received "${contentType}"`);
+		}
+
+		if (error) {
+			log("ERROR", error.message);
+			response.resume();
+			return;
+		}
+
+		let rawBuffer = [];
+
+		response.on("data", (chunk) => {
+			rawBuffer.push(chunk);
+		});
+		response.on("end", () => {
+			try {
+				let buffer = Buffer.concat(rawBuffer);
+				ExtractBuild(buffer, buildNum);
+			} catch (error) {
+				log("ERROR", error.message);
+			}
+		});
+	});
 }
 
 function OnBuildInfo(data) {
