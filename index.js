@@ -60,4 +60,36 @@ if (!pathInfo.isDirectory()) {
 	log("ERROR", `${output} is an invalid <output directory>`);
 }
 
+https.get(`https://changelogs-live.fivem.net/api/changelog/versions/${platform}/server`, (response) => {
+	const { statusCode } = response;
+	const contentType = response.headers['content-type'];
+
+	let error;
+
+	if (statusCode !== 200) {
+		error = new Error(`Request failed with status code: ${statusCode}`);
+	} else if (!/^application\/json/.test(contentType)) {
+		error = new Error(`Invalid content-type, expected "application/json" but received "${contentType}"`);
+	}
+
+	if (error) {
+		log("ERROR", error.message);
+		// Consume response data to free up memory
+		response.resume();
+		return;
+	}
+
+	let rawData = "";
+
+	response.setEncoding("utf8");
+	response.on("data", (chunk) => { rawData += chunk; });
+	response.on("end", () => {
+		try {
+			const parsedData = JSON.parse(rawData);
+		} catch (error) {
+			log("ERROR", error.message);
+		}
+	});
+});
+
 log("SUCCESS", "DO STUFF");
