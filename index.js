@@ -10,12 +10,13 @@ const helpMsg = `
 	node index.js <version> <output directory>
 		<version>:
 			- recommended
+			- optional
 			- latest
 			- critical
 		<output directory>:
 			- C:\\Path\\To\\File
 `;
-const versions = ["recommended", "latest", "critical"];
+const versions = ["recommended", "optional", "latest", "critical"];
 const platforms = ["win32", "linux"];
 const platform = os.platform();
 
