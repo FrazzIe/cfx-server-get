@@ -2,6 +2,7 @@
 const fs = require("fs");
 const os = require("os");
 const https = require("https");
+const AdmZip = require("adm-zip");
 
 //vars
 const appName = "cfx-server-get";
