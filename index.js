@@ -46,7 +46,7 @@ function StoreBuildInfo(buildNum) {
 function ExtractBuild(fileBuffer, buildNum) {
 	try {
 		const zip = new AdmZip(fileBuffer);
-		zip.extractAllTo(output);
+		zip.extractAllTo(output, true);
 	} catch(error) {
 		log("ERROR", `Couldn't extract the ${version} build to ${output}`);
 		return;
