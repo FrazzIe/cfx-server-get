@@ -27,6 +27,27 @@ function log(tag, msg) {
 	console.log(`${appName}/${tag}: ${msg}`);
 }
 
+function DownloadBuild(downloadURL, buildNum) {
+
+}
+
+function OnBuildInfo(data) {
+	let buildNum = data[version];
+	let downloadURL = data[version + "_download"];
+
+	if (!buildNum) {
+		log("ERROR", `Couldn't fetch ${version} build number`);
+		return;
+	}
+
+	if (!downloadURL) {
+		log("ERROR", `Couldn't fetch ${version} download url`);
+		return;
+	}
+
+	DownloadBuild(downloadURL, buildNum);
+}
+
 if (!platforms.includes(platform)) {
 	log("ERROR", `${platform} is not a supported os, terminating.`);
 	return;
@@ -86,6 +107,7 @@ https.get(`https://changelogs-live.fivem.net/api/changelog/versions/${platform}/
 	response.on("end", () => {
 		try {
 			const parsedData = JSON.parse(rawData);
+			OnBuildInfo(parsedData);
 		} catch (error) {
 			log("ERROR", error.message);
 		}
