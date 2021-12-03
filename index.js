@@ -49,6 +49,7 @@ function ExtractBuild(fileBuffer, buildNum) {
 	try {
 		const zip = new AdmZip(fileBuffer);
 		zip.extractAllTo(output, true);
+		console.log(`Installed ${version}:${buildNum}`);
 	} catch(error) {
 		log("ERROR", `Couldn't extract the ${version} build to ${output}`);
 		return;
@@ -57,10 +58,35 @@ function ExtractBuild(fileBuffer, buildNum) {
 	StoreBuildInfo(buildNum);
 }
 
+function ShowDownloadProgress(current, max, buildNum) {
+	if (current > max)
+		return;
+
+	process.stdout.clearLine();
+	process.stdout.cursorTo(0);
+
+	let percentage = Math.floor(current / max * 100);
+	let bar = "";
+	let barCount = Math.floor(percentage / 4);
+
+	for (let i = 1; i < 25; i++) {
+		bar += (i <= barCount) ? "=" : "-";
+	}
+
+	if (current == max) {
+		console.log(`Downloaded ${version}:${buildNum} [${bar}] ${percentage}% | ${current}/${max} chunks`);
+		return;
+	}
+
+	process.stdout.write(`Downloading... [${bar}] ${percentage}% | ${current}/${max} chunks`);
+}
+
 function DownloadBuild(downloadURL, buildNum) {
 	https.get(downloadURL, (response) => {
 		const { statusCode } = response;
 		const contentType = response.headers['content-type'];
+		const contentLength = response.headers['content-length'];
+		let contentReceived = 0;
 		let error;
 
 		if (statusCode !== 200) {
@@ -79,7 +105,10 @@ function DownloadBuild(downloadURL, buildNum) {
 
 		response.on("data", (chunk) => {
 			rawBuffer.push(chunk);
+			contentReceived += chunk.length;
+			ShowDownloadProgress(contentReceived, contentLength, buildNum);
 		});
+
 		response.on("end", () => {
 			try {
 				let buffer = Buffer.concat(rawBuffer);
